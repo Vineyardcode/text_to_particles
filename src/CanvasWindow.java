@@ -3,7 +3,7 @@ import java.awt.Canvas;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
@@ -15,44 +15,44 @@ public class CanvasWindow extends Frame {
     private int y = 0;
     private BufferStrategy bufferstrat = null;
     public Canvas canvas;
+    Input input;
 
-    public CanvasWindow(int width, int height) {
+    public CanvasWindow() {
         super();
-        setTitle("Texticles");
+        setTitle("Vaisík's Texticles");
         setIgnoreRepaint(true);
+        setResizable(false);
 
         canvas = new Canvas();
+        input = new Input();
         canvas.setIgnoreRepaint(true);
 
-        int nHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-        int nWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-        nHeight /= 2;
-        nWidth /= 2;
-
-        setBounds(nWidth-(width/2), nHeight-(height/2), width, height);
-        canvas.setBounds(nWidth-(width/2), nHeight-(height/2), width, height);
-
+        canvas.setSize(500,500);
         add(canvas);
         pack();
         setVisible(true);
 
         canvas.createBufferStrategy(2);
         bufferstrat = canvas.getBufferStrategy();
+
+
     }
 
-    public void manageMouseInput(){
-        canvas.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-
-            }
-
+    public void manageListeners(){
+        canvas.addMouseMotionListener(new Input() {
             @Override
             public void mouseMoved(MouseEvent e) {
                 addParticle(true);
+                addParticle(false);
             }
         });
 
+        this.addWindowListener(new Input() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                dispose();
+            }
+        });
     }
 
     public void loop(){
@@ -111,10 +111,9 @@ public class CanvasWindow extends Frame {
             dx = (int) (Math.random()*-5);
             dy = (int) (Math.random()*-5);
         }
-        int size = 10;
-        int life = 100;
+        int size = 7;
+        int life = 500;
         particles.add(new Particle(x,y,dx,dy,size,life,Color.magenta));
     }
-
 
 }
