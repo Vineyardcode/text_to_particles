@@ -23,18 +23,15 @@ public class CanvasWindow extends Frame {
         setIgnoreRepaint(true);
         setResizable(false);
 
-        canvas = new Canvas();
+        canvas = new MyCanvas();
         input = new Input();
-        canvas.setIgnoreRepaint(true);
 
-        canvas.setSize(500,500);
         add(canvas);
         pack();
         setVisible(true);
 
         canvas.createBufferStrategy(2);
         bufferstrat = canvas.getBufferStrategy();
-
 
     }
 

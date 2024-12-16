@@ -5,8 +5,9 @@ public class MyCanvas extends Canvas
 
     public MyCanvas() {
 
-        setBackground (Color.MAGENTA);
+        setBackground (Color.BLACK);
         setSize(500, 500);
+        setIgnoreRepaint(true);
 
     }
 
