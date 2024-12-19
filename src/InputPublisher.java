@@ -74,4 +74,5 @@ public class InputPublisher implements MouseMotionListener, WindowListener {
     public void windowDeactivated(WindowEvent e) {
 
     }
+
 }
