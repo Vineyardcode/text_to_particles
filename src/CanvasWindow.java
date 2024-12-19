@@ -7,15 +7,14 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
-public class CanvasWindow extends Frame {
+public class CanvasWindow extends Frame implements InputSubscriber {
 
     private ArrayList<Particle> particles = new ArrayList<Particle>(10);
+    private int x;
+    private int y;
 
-    private int x = 0;
-    private int y = 0;
     private BufferStrategy bufferstrat = null;
     public Canvas canvas;
-    Input input;
 
     public CanvasWindow() {
         super();
@@ -24,7 +23,6 @@ public class CanvasWindow extends Frame {
         setResizable(false);
 
         canvas = new MyCanvas();
-        input = new Input();
 
         add(canvas);
         pack();
@@ -33,23 +31,6 @@ public class CanvasWindow extends Frame {
         canvas.createBufferStrategy(2);
         bufferstrat = canvas.getBufferStrategy();
 
-    }
-
-    public void manageListeners(){
-        canvas.addMouseMotionListener(new Input() {
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                addParticle(true);
-                addParticle(false);
-            }
-        });
-
-        this.addWindowListener(new Input() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                dispose();
-            }
-        });
     }
 
     public void loop(){
@@ -82,6 +63,7 @@ public class CanvasWindow extends Frame {
         do{
             do{
                 Graphics2D g2d = (Graphics2D) bufferstrat.getDrawGraphics();
+                g2d.setColor(Color.ORANGE);
                 g2d.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
                 renderParticles(g2d);
@@ -110,7 +92,18 @@ public class CanvasWindow extends Frame {
         }
         int size = 7;
         int life = 500;
-        particles.add(new Particle(x,y,dx,dy,size,life,Color.magenta));
+        particles.add(new Particle(x,y,dx,dy,size,life,Color.black));
+    }
+
+    @Override
+    public void onMouseMoved(MouseEvent e){
+        addParticle(true);
+        addParticle(false);
+    }
+
+    @Override
+    public void onWindowClosing(WindowEvent e) {
+        dispose();
     }
 
 }

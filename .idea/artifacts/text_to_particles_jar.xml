@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="text_to_particles:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/text_to_particles_jar</output-path>
+    <root id="archive" name="text_to_particles.jar">
+      <element id="module-output" name="text_to_particles" />
+    </root>
+  </artifact>
+</component>

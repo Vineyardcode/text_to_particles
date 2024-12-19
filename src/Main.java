@@ -3,7 +3,12 @@ public class Main {
     public static void main(String[] args) {
 
         CanvasWindow window = new CanvasWindow();
-        window.manageListeners();
+        InputPublisher publisher = new InputPublisher();
+
+        publisher.subscribe(window);
+        window.addMouseMotionListener(publisher);
+        window.addWindowListener(publisher);
+
         window.loop();
 
     }
