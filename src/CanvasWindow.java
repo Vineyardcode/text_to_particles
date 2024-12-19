@@ -9,12 +9,14 @@ import java.util.ArrayList;
 
 public class CanvasWindow extends Frame implements InputSubscriber {
 
-    private ArrayList<Particle> particles = new ArrayList<Particle>(10);
+    private ArrayList<Particle> particles = new ArrayList<>(10);
     private int x;
     private int y;
 
     private BufferStrategy bufferstrat = null;
     public Canvas canvas;
+
+    InputPublisher publisher = new InputPublisher();
 
     public CanvasWindow() {
         super();

@@ -6,7 +6,7 @@ public class Main {
         InputPublisher publisher = new InputPublisher();
 
         publisher.subscribe(window);
-        window.addMouseMotionListener(publisher);
+        window.canvas.addMouseMotionListener(publisher);
         window.addWindowListener(publisher);
 
         window.loop();
