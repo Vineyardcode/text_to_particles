@@ -23,6 +23,12 @@ public class InputPublisher implements MouseMotionListener, WindowListener {
         }
     }
 
+    public void notifyMouseDragged(MouseEvent e) {
+        for (InputSubscriber sub : subscribers){
+            sub.onMouseDragged(e);
+        }
+    }
+
     public void notifyWindowClosing(WindowEvent e) {
         for (InputSubscriber sub : subscribers){
             sub.onWindowClosing(e);
@@ -31,7 +37,7 @@ public class InputPublisher implements MouseMotionListener, WindowListener {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-
+        notifyMouseDragged(e);
     }
 
     @Override

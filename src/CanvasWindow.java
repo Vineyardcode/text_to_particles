@@ -5,18 +5,22 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public class CanvasWindow extends Frame implements InputSubscriber {
 
-    private ArrayList<Particle> particles = new ArrayList<>(10);
     private int x;
     private int y;
 
     private BufferStrategy bufferstrat = null;
     public Canvas canvas;
 
-    InputPublisher publisher = new InputPublisher();
+    public TextFXManager textFXManager = new TextFXManager();
+    private ArrayList<Particle> particles = textFXManager.particleArrayList;
+
+    BufferedImage textImage = textFXManager.drawText("Vaisík's Texticles",250, 250, 1000, 500, new Font("Arial", Font.BOLD, 50), Color.BLACK);
+    int[][] result = textFXManager.getTextPixelData(textImage);
 
     public CanvasWindow() {
         super();
@@ -32,6 +36,7 @@ public class CanvasWindow extends Frame implements InputSubscriber {
 
         canvas.createBufferStrategy(2);
         bufferstrat = canvas.getBufferStrategy();
+        textFXManager.assembleTextFromParticles(result);
 
     }
 
@@ -56,10 +61,10 @@ public class CanvasWindow extends Frame implements InputSubscriber {
             y = p.y;
         }
         for(int i = 0; i <= particles.size() - 1;i++){
-            if(particles.get(i).update())
-                particles.remove(i);
+            particles.get(i).update();
         }
     }
+
 
     public void render(){
         do{
@@ -67,6 +72,7 @@ public class CanvasWindow extends Frame implements InputSubscriber {
                 Graphics2D g2d = (Graphics2D) bufferstrat.getDrawGraphics();
                 g2d.setColor(Color.ORANGE);
                 g2d.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
 
                 renderParticles(g2d);
 
@@ -82,30 +88,33 @@ public class CanvasWindow extends Frame implements InputSubscriber {
         }
     }
 
-    public void addParticle(boolean bool){
-        int dx,dy;
-        if(bool){
-            dx = (int) (Math.random()*5);
-            dy = (int) (Math.random()*5);
-        }
-        else{
-            dx = (int) (Math.random()*-5);
-            dy = (int) (Math.random()*-5);
-        }
-        int size = 7;
-        int life = 500;
-        particles.add(new Particle(x,y,dx,dy,size,life,Color.black));
+    public void testPartilesMovement(MouseEvent e) {
+
+            for (int i = 0; i <= particles.size() - 1; i++) {
+                if (e.getX() < particles.get(i).x + 5) {
+                    particles.get(i).x+=0.5;
+                } else if (e.getY() < particles.get(i).y + 5) {
+                    particles.get(i).y+=0.5;
+                }
+            }
+
     }
 
     @Override
     public void onMouseMoved(MouseEvent e){
-        addParticle(true);
-        addParticle(false);
+        testPartilesMovement(e);
+    }
+
+    @Override
+    public void onMouseDragged(MouseEvent e) {
+
     }
 
     @Override
     public void onWindowClosing(WindowEvent e) {
         dispose();
     }
+
+
 
 }
