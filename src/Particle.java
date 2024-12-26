@@ -4,8 +4,8 @@ public class Particle {
 
     public double x;
     public double y;
-    public int originX;
-    public int originY;
+    public double originX;
+    public double originY;
     private int size;
     private int life;
     private Color color;
@@ -31,13 +31,15 @@ public class Particle {
 
     public void update() {
         double easingFactor = 0.1;
+        double dx = originX - x;
+        double dy = originY - y;
 
-        if (x > originX + 3 || x < originX ) {
-            x += (originX - x) * easingFactor;
-        } else if (y > originY  || y < originY ) {
-            y += (originY - y) * easingFactor;
+        if (Math.abs(dx) > 0.1) {
+            x += dx * easingFactor;
         }
-
+        if (Math.abs(dy) > 0.1) {
+            y += dy * easingFactor;
+        }
     }
 
 }

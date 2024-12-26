@@ -1,7 +1,4 @@
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
+import java.awt.event.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class InputPublisher implements MouseMotionListener, WindowListener {
