@@ -8,7 +8,7 @@ public class Particle {
     public double originY;
     private int size;
     private int life;
-    private Color color;
+    public Color color;
 
     public Particle(int x, int y, int size, int life, Color c){
         this.x = x;

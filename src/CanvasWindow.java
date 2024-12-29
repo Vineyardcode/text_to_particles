@@ -4,24 +4,14 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 
 public class CanvasWindow extends Frame implements InputSubscriber {
 
-    private int x;
-    private int y;
-
     private BufferStrategy bufferstrat = null;
     public Canvas canvas;
+    public TextFX textFX = new TextFX();
 
-    public TextFXManager textFXManager = new TextFXManager();
-
-    public TexticleAssembler TexticleAssembler = new TexticleAssembler();
-
-    BufferedImage textImage = TexticleAssembler.drawText("Vaisík's Texticles",0, 35, 1000, 500, new Font("Arial", Font.ROMAN_BASELINE, 50), Color.BLACK);
-    int[][] result = TexticleAssembler.getTextPixelData(textImage);
-
-    ParticleGroup particleGroup;
+    texticleGroup texticleGroup;
 
     public CanvasWindow() {
         super();
@@ -41,8 +31,13 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     }
 
     public void initialize() {
-        TexticleAssembler.assembleTextFromParticles(result);
-        particleGroup = new ParticleGroup(TexticleAssembler.particleArrayList, 0, 0);
+        texticleGroup = new texticleGroup(
+                "Vaisík's Texticles",
+                new Font("Times New Roman", Font.ROMAN_BASELINE, 100),
+                Color.white,
+                0,
+                0
+        );
     }
 
     public void loop(){
@@ -60,7 +55,7 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     }
 
     public void update(){
-        particleGroup.updateGroup();
+        texticleGroup.updateGroup(0.1);
     }
 
     public void render(){
@@ -79,22 +74,13 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     }
 
     public void renderParticles(Graphics2D g2d){
-        particleGroup.renderGroup(g2d);
+        texticleGroup.renderGroup(g2d);
     }
 
     @Override
     public void onMouseMoved(MouseEvent e){
-        double threshold = 7;
-
-        for (Particle p : particleGroup.particleArrayList) {
-
-            double dx = e.getX() - p.x;
-            double dy = e.getY() - p.y;
-            double distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < threshold) {
-                p.x += dx * 5;
-                p.y += dy * 5;
-            }
+        if (texticleGroup != null && texticleGroup.texticleArrayList != null) {
+            textFX.basicParticleEffect(e, texticleGroup.texticleArrayList, texticleGroup.groupX, texticleGroup.groupY);
         }
     }
 
