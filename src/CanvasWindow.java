@@ -82,7 +82,6 @@ public class CanvasWindow extends Frame implements InputSubscriber {
         ));
     }
 
-
     public void loop(){
         while(true){
 
