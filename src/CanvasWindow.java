@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
 
 public class CanvasWindow extends Frame implements InputSubscriber {
 
@@ -12,6 +13,8 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     public TextFX textFX = new TextFX();
 
     texticleGroup texticleGroup;
+    private ArrayList<texticleGroup> texticleGroups;
+
 
     public CanvasWindow() {
         super();
@@ -31,14 +34,54 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     }
 
     public void initialize() {
-        texticleGroup = new texticleGroup(
-                "Vaisík's Texticles",
-                new Font("Times New Roman", Font.ROMAN_BASELINE, 100),
+        texticleGroups = new ArrayList<>();
+        int textSize = 50;
+        texticleGroups.add(new texticleGroup(
+                "Suspendisse at elementum ante, blandit dapibus libero. Mauris vitae aliquam metus, at blandit diam.",
+                new Font("Times New Roman", Font.PLAIN, textSize),
                 Color.white,
-                0,
+                Math.floor(-500 + 250 * Math.random()),
                 0
-        );
+        ));
+
+        texticleGroups.add(new texticleGroup(
+                "Vestibulum a sagittis diam, scelerisque suscipit nisi. Sed ultricies sollicitudin maximus. Ut ac odio nec elit aliquam rutrum at ut velit.",
+                new Font("Times New Roman", Font.PLAIN, textSize),
+                Color.gray,
+                Math.floor(-250 + -100 * Math.random()),
+                50
+        ));
+
+        texticleGroups.add(new texticleGroup(
+                "Aliquam imperdiet orci id nunc cursus rhoncus. Nulla rhoncus mauris vel lacus feugiat, quis tristique nisl feugiat.",
+                new Font("Times New Roman", Font.PLAIN, textSize),
+                Color.white,
+                Math.floor(-250 + -100 * Math.random()),
+                100
+        ));
+        texticleGroups.add(new texticleGroup(
+                "Pellentesque mattis et nulla a luctus. Vivamus auctor non nibh quis aliquam.",
+                new Font("Times New Roman", Font.PLAIN, textSize),
+                Color.gray,
+                Math.floor(-250 + -100 * Math.random()),
+                150
+        ));
+        texticleGroups.add(new texticleGroup(
+                "Aliquam imperdiet orci id nunc cursus rhoncus. Nulla rhoncus mauris vel lacus feugiat, quis tristique nisl feugiat.",
+                new Font("Times New Roman", Font.PLAIN, textSize),
+                Color.white,
+                Math.floor(-250 + -100 * Math.random()),
+                200
+        ));
+        texticleGroups.add(new texticleGroup(
+                "Phasellus suscipit hendrerit elit at facilisis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+                new Font("Times New Roman", Font.PLAIN, textSize),
+                Color.gray,
+                Math.floor(-250 + -100 * Math.random()),
+                250
+        ));
     }
+
 
     public void loop(){
         while(true){
@@ -55,7 +98,9 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     }
 
     public void update(){
-        texticleGroup.updateGroup(0.1);
+        for (texticleGroup group : texticleGroups) {
+            group.updateGroup(Math.floor(5 * Math.random()));
+        }
     }
 
     public void render(){
@@ -74,13 +119,17 @@ public class CanvasWindow extends Frame implements InputSubscriber {
     }
 
     public void renderParticles(Graphics2D g2d){
-        texticleGroup.renderGroup(g2d);
+        for (texticleGroup group : texticleGroups) {
+            group.renderGroup(g2d);
+        }
     }
 
     @Override
     public void onMouseMoved(MouseEvent e){
-        if (texticleGroup != null && texticleGroup.texticleArrayList != null) {
-            textFX.basicParticleEffect(e, texticleGroup.texticleArrayList, texticleGroup.groupX, texticleGroup.groupY);
+        for (texticleGroup group : texticleGroups) {
+            if (group != null && group.texticleArrayList != null) {
+                textFX.basicDisplacement(e, group.texticleArrayList, group.groupX, group.groupY);
+            }
         }
     }
 

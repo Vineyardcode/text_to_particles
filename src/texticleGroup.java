@@ -7,6 +7,7 @@ public class texticleGroup {
     public double groupY;
     public double rotation;
     public double scale;
+    public boolean isMoving = true;
     public ArrayList<Particle> texticleArrayList;
     public TexticleAssembler texticleAssembler = new TexticleAssembler();
 
@@ -35,13 +36,20 @@ public class texticleGroup {
         for (Particle particle : texticleArrayList) {
             particle.update();
         }
+        moveGroup(testSpeed);
+    }
 
-        if (groupX <= 0) {
+    public void moveGroup(double testSpeed) {
+        if (isMoving) {
             groupX += testSpeed;
-        }
-        if (groupX >= 250){
+            if (groupX >= -50) {
+                isMoving = false;
+            }
+        } else {
             groupX -= testSpeed;
+            if (groupX <= -250) {
+                isMoving = true;
+            }
         }
-
     }
 }
