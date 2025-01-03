@@ -7,7 +7,6 @@ public class Main {
         publisher.subscribe(window);
         window.canvas.addMouseMotionListener(publisher);
         window.addWindowListener(publisher);
-        window.initialize();
 
         window.loop();
     }

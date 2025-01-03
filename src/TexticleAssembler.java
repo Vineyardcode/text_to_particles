@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class TexticleAssembler {
 
-    public ArrayList<Particle> particleArrayList = new ArrayList<>();
+    public ArrayList<ArrayList<Particle>> texticleArrayListCollection = new ArrayList<>();
 
     public BufferedImage createTextImage(String text, Font font) {
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -47,9 +47,10 @@ public class TexticleAssembler {
         return pixelCoords;
     }
 
-    public void getParticleArrayList(int[][] textImagePixelCoords, Color particleColor){
-        int size = 3;
-        int life = 1000;
+    public ArrayList<Particle> getParticleArrayList(int[][] textImagePixelCoords, Color particleColor){
+        int size = 1;
+        int life = 1;
+        ArrayList<Particle> particleArrayList = new ArrayList<>();
 
         for (int row = 0; row < textImagePixelCoords.length; row++) {
             for (int col = 0; col < textImagePixelCoords[row].length; col++) {
@@ -58,14 +59,25 @@ public class TexticleAssembler {
                 }
             }
         }
+
+        return particleArrayList;
     }
 
-    public void assembleTexticleArrayList(String text, Font font, Color color) {
-        getParticleArrayList(getTextImagePixelCoords(createTextImage(text, font)), color);
-//        in case debug is needed:
-//        BufferedImage textImage = createTextImage(text, font, color);
-//        int[][] pixelData = getTextImagePixelData(textImage);
-//        getParticleArrayList(pixelData);
+    public ArrayList<ArrayList<Particle>> getTexticleArrayListCollectionOfAsciiCharacters() {
+        String ascii_characters = "▌!#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_`{|}~";
+
+        for (char asciiChar : ascii_characters.toCharArray()) {
+            texticleArrayListCollection.add(
+                    getParticleArrayList(
+                            getTextImagePixelCoords(
+                                    createTextImage(String.valueOf(asciiChar), new Font("Monospace", 0, 100))
+                            ),
+                            Color.white
+                    )
+            );
+        }
+
+        return texticleArrayListCollection;
     }
 
 }
