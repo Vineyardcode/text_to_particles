@@ -1,9 +1,13 @@
+import java.awt.*;
+
 public class Particle {
 
     public double x, y;
     public double originalX, originalY;
     public double targetX, targetY;
     double velocityX, velocityY;
+    public boolean isDiplaced = false;
+    public Color color = Color.WHITE;
     private int life;
 
     public Particle(int x, int y){
@@ -25,6 +29,10 @@ public class Particle {
         double angle = Math.atan2(mouseY - this.y, mouseX - this.x);
         this.targetX = this.x + Math.cos(angle) * 50;
         this.targetY = this.y + Math.sin(angle) * 50;
+    }
+
+    public void startCreatingCoolPatterns() {
+
     }
 
     public void update() {

@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -11,11 +12,12 @@ public class TexticleCell implements InputSubscriber {
     public int width, height;
     public int fontSize;
 
-    private int texticleSize = 2;
+    private int texticleSize = 1;
     public int currentTextIndex = (int)(Math.random() * specialCharactersArray.length);
     private int stepSize = 2; // every n-th particle will be painted
 
     public List<Particle> particles = new ArrayList<>();
+    public List<Particle> unusedParticles = new ArrayList<>();
     private static final String[] specialCharactersArray = {
             "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "▌", "/",
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "!", "9", ":", ";", "<", "=",
@@ -29,6 +31,9 @@ public class TexticleCell implements InputSubscriber {
         this.width = fontSize/2;
         this.height = fontSize;
         initializeParticles(specialCharactersArray[currentTextIndex]);
+
+        Timer textChangeTimer = new Timer((int)(Math.random() * 1500), e -> {updateTargetText();});
+        textChangeTimer.start();
     }
 
     private void initializeParticles(String text) {
@@ -109,7 +114,7 @@ public class TexticleCell implements InputSubscriber {
     public void paintParticles(Graphics2D g) {
         for (Particle particle : particles) {
             particle.update();
-            g.setColor(Color.WHITE);
+            g.setColor(particle.color);
             g.fillRect((int) particle.x, (int) particle.y, texticleSize, texticleSize);
         }
     }
@@ -122,8 +127,12 @@ public class TexticleCell implements InputSubscriber {
         for (Particle particle : particles) {
             double distance = Math.hypot(mouseX - particle.x, mouseY - particle.y);
             if (distance < 25) {
+                particle.isDiplaced = true;
                 particle.displace(mouseX, mouseY);
+            } else {
+                particle.isDiplaced = false;
             }
+
         }
     }
 

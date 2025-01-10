@@ -32,18 +32,10 @@ public class CanvasWindow extends Frame {
         Timer timer = new Timer(16, e -> repaint());
         timer.start();
 
-        Timer textChangeTimer = new Timer(1500, e -> {
-            for (TexticleCell tc : texticleCellGrid) {
-                tc.updateTargetText();
-            }
-        });
-        textChangeTimer.start();
-
-
     }
 
     public void initializeTexticleCells() {
-        int fontSize = 30;
+        int fontSize = 42;
         for (int i = 0; i < canvas.getWidth(); i += fontSize/2) {
             for (int j = 0; j < canvas.getHeight(); j += fontSize) {
                 texticleCellGrid.add(new TexticleCell(i, j, fontSize));
@@ -69,7 +61,6 @@ public class CanvasWindow extends Frame {
                 Graphics2D g = (Graphics2D) bufferstrat.getDrawGraphics();
                 g.setColor(Color.BLACK);
                 g.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
 
                 if (texticleCellGrid != null) {
                     for (TexticleCell tc : texticleCellGrid) {
