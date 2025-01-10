@@ -7,10 +7,10 @@ public class TexticleAssembler {
 
     public ArrayList<ArrayList<Particle>> texticleArrayListCollection = new ArrayList<>();
 
-    public BufferedImage createTextImage(String text, Font font) {
+    public BufferedImage createTextImage(String text, int fontSize) {
         BufferedImage tempImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2dTemp = tempImage.createGraphics();
-        g2dTemp.setFont(font);
+        g2dTemp.setFont(new Font("Monospaced", Font.BOLD, fontSize));
         FontMetrics fontMetrics = g2dTemp.getFontMetrics();
 
         int textWidth = fontMetrics.stringWidth(text);
@@ -22,7 +22,7 @@ public class TexticleAssembler {
         Graphics2D g2d = textImage.createGraphics();
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setFont(font);
+        g2d.setFont(new Font("Monospaced", Font.BOLD, fontSize));
 
         g2d.drawString(text, 0, fontMetrics.getAscent());
 
@@ -47,7 +47,7 @@ public class TexticleAssembler {
         return pixelCoords;
     }
 
-    public ArrayList<Particle> getParticleArrayList(int[][] textImagePixelCoords, Color particleColor){
+    public ArrayList<Particle> getParticleArrayList(int[][] textImagePixelCoords){
         int size = 1;
         int life = 1;
         ArrayList<Particle> particleArrayList = new ArrayList<>();
@@ -55,7 +55,7 @@ public class TexticleAssembler {
         for (int row = 0; row < textImagePixelCoords.length; row++) {
             for (int col = 0; col < textImagePixelCoords[row].length; col++) {
                 if ((textImagePixelCoords[row][col] & 0xFF000000) != 0) {
-                    particleArrayList.add(new Particle(col, row, size, life, particleColor));
+                    particleArrayList.add(new Particle(col, row));
                 }
             }
         }
@@ -70,9 +70,8 @@ public class TexticleAssembler {
             texticleArrayListCollection.add(
                     getParticleArrayList(
                             getTextImagePixelCoords(
-                                    createTextImage(String.valueOf(asciiChar), new Font("Monospace", 0, 100))
-                            ),
-                            Color.white
+                                    createTextImage(String.valueOf(asciiChar), 100)
+                            )
                     )
             );
         }

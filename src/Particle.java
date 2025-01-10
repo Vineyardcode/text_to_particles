@@ -1,45 +1,53 @@
-import java.awt.*;
-
 public class Particle {
 
-    public double x;
-    public double y;
-    public double originX;
-    public double originY;
-    private int size;
+    public double x, y;
+    public double originalX, originalY;
+    public double targetX, targetY;
+    double velocityX, velocityY;
     private int life;
-    public Color color;
 
-    public Particle(int x, int y, int size, int life, Color c){
-        this.x = x;
-        this.y = y;
-        this.originX = x;
-        this.originY = y;
-        this.size = size;
-        this.life = life;
-        this.color = c;
+    public Particle(int x, int y){
+        this.x = this.originalX = x;
+        this.y = this.originalY = y;
+        this.targetX = x;
+        this.targetY = y;
+        this.life = 1;
+        this.velocityX = 0;
+        this.velocityY = 0;
     }
 
-    public void renderParticle(Graphics g){
-        Graphics2D g2d = (Graphics2D) g.create();
+    public void setNewTarget(double targetX, double targetY) {
+        this.targetX = targetX;
+        this.targetY = targetY;
+    }
 
-        g2d.setColor(color);
-        g2d.fillRect((int) x-(size/2), (int) y-(size/2), size, size);
-
-        g2d.dispose();
+    public void displace(int mouseX, int mouseY) {
+        double angle = Math.atan2(mouseY - this.y, mouseX - this.x);
+        this.targetX = this.x + Math.cos(angle) * 50;
+        this.targetY = this.y + Math.sin(angle) * 50;
     }
 
     public void update() {
-        double easingFactor = 0.1;
-        double dx = originX - x;
-        double dy = originY - y;
+        double acceleration = 1;
+        double damping = 0.42;
 
-        if (Math.abs(dx) > 0.1) {
-            x += dx * easingFactor;
-        }
-        if (Math.abs(dy) > 0.1) {
-            y += dy * easingFactor;
-        }
+        velocityX += (targetX - x) * acceleration;
+        velocityY += (targetY - y) * acceleration;
+
+        velocityX *= damping;
+        velocityY *= damping;
+
+        x += velocityX * easeInOutBack(damping);
+        y += velocityY * easeInOutBack(damping);
+    }
+
+    private double easeInOutBack(double x) {
+        final double c1 = 1.70158;
+        final double c2 = c1 * 1.525;
+
+        return x < 0.5
+                ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
+                : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
     }
 
 }
