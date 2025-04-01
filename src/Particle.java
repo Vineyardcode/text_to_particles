@@ -3,59 +3,94 @@ import java.awt.*;
 public class Particle {
 
     public double x, y;
-    public double originalX, originalY;
-    public double targetX, targetY;
-    double velocityX, velocityY;
-    public boolean isDiplaced = false;
+    public Vector2 originalPosition;
+    public Vector2 position;
+    public Vector2 prevPosition;
+    private Vector2 targetPosition;
+    private Vector2 velocity;
+    public boolean isDisplaced = false;
     public Color color = Color.WHITE;
     private int life;
+    public int size;
+    private float hue, saturation, brightness;
 
     public Particle(int x, int y){
-        this.x = this.originalX = x;
-        this.y = this.originalY = y;
-        this.targetX = x;
-        this.targetY = y;
-        this.life = 1;
-        this.velocityX = 0;
-        this.velocityY = 0;
+        this.originalPosition = new Vector2(x, y);
+        this.x = x;
+        this.y = y;
+        this.life = 0;
+        this.position = new Vector2(x, y);
+        this.prevPosition = new Vector2(x, y);
+        this.targetPosition = new Vector2(x, y);
+        this.velocity = new Vector2(0, 0);
+        this.size = 2;
+
     }
 
-    public void setNewTarget(double targetX, double targetY) {
-        this.targetX = targetX;
-        this.targetY = targetY;
+    public void setNewTarget(Vector2 newTarget) {
+        this.targetPosition = newTarget;
     }
 
-    public void displace(int mouseX, int mouseY) {
-        double angle = Math.atan2(mouseY - this.y, mouseX - this.x);
-        this.targetX = this.x + Math.cos(angle) * 50;
-        this.targetY = this.y + Math.sin(angle) * 50;
+    public Vector2 getPosition() {
+        return position;
     }
 
-    public void startCreatingCoolPatterns() {
+    public Vector2 getPrevPosition() {
+        return prevPosition;
+    }
 
+    public void setPosition(Vector2 newPosition) {
+        this.prevPosition = this.position;
+        this.position = newPosition;
+    }
+
+    public void setPrevPosition(Vector2 newPosition) {
+        this.prevPosition = newPosition;
+    }
+
+    public Vector2 getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(Vector2 velocity) {
+        this.velocity = velocity;
+    }
+
+    public void displace() {
+        this.life = 1000;
+        this.isDisplaced = true;
     }
 
     public void update() {
         double acceleration = 1;
-        double damping = 0.42;
+        double damping = 0.37;
 
-        velocityX += (targetX - x) * acceleration;
-        velocityY += (targetY - y) * acceleration;
+        if (this.isDisplaced){
+            this.life--;
 
-        velocityX *= damping;
-        velocityY *= damping;
+            this.x += (this.position.x - this.x) * acceleration;
+            this.y += (this.position.y - this.y) * acceleration;
 
-        x += velocityX * easeInOutBack(damping);
-        y += velocityY * easeInOutBack(damping);
+            this.velocity.x *= damping;
+            this.velocity.y *= damping;
+
+            this.x += this.velocity.x * damping;
+            this.y += this.velocity.y * damping;
+
+            if (this.life == 0){
+                this.isDisplaced = false;
+            }
+        } else {
+            this.velocity.x += (this.targetPosition.x - this.x) * acceleration;
+            this.velocity.y += (this.targetPosition.y - this.y) * acceleration;
+
+            this.velocity.x *= damping;
+            this.velocity.y *= damping;
+
+            this.x += this.velocity.x * damping;
+            this.y += this.velocity.y * damping;
+
+        }
+
     }
-
-    private double easeInOutBack(double x) {
-        final double c1 = 1.70158;
-        final double c2 = c1 * 1.525;
-
-        return x < 0.5
-                ? (Math.pow(2 * x, 2) * ((c2 + 1) * 2 * x - c2)) / 2
-                : (Math.pow(2 * x - 2, 2) * ((c2 + 1) * (x * 2 - 2) + c2) + 2) / 2;
-    }
-
 }

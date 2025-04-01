@@ -4,12 +4,10 @@ public class Main {
         CanvasWindow window = new CanvasWindow();
         InputPublisher publisher = new InputPublisher();
 
-        for (TexticleCell tc : window.texticleCellGrid) {
-            publisher.subscribe(tc);
-        }
-
         window.canvas.addMouseMotionListener(publisher);
         window.addWindowListener(publisher);
+
+        publisher.subscribe(window);
 
         window.loop();
     }

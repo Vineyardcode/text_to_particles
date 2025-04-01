@@ -5,7 +5,7 @@ public class MyCanvas extends Canvas
 
     public MyCanvas() {
 
-        setSize(750, 500);
+//        setSize(500, 500);
         setIgnoreRepaint(true);
 
     }

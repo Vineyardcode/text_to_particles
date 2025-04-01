@@ -1,28 +1,25 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TexticleCell implements InputSubscriber {
+public class TexticleCell {
     public double x, y;
     public int width, height;
     public int fontSize;
 
-    private int texticleSize = 1;
     public int currentTextIndex = (int)(Math.random() * specialCharactersArray.length);
     private int stepSize = 2; // every n-th particle will be painted
 
-    public List<Particle> particles = new ArrayList<>();
-    public List<Particle> unusedParticles = new ArrayList<>();
+    public List<Particle> cellParticles = new ArrayList<>();
     private static final String[] specialCharactersArray = {
-            "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "▌", "/",
+            "#", "$", "%", "&", "'", "(", ")", "*", "+", ",", "-", ".", "/",
             "0", "1", "2", "3", "4", "5", "6", "7", "8", "!", "9", ":", ";", "<", "=",
             ">", "?", "@", "[", "]", "^", "_", "`", "{", "|", "}", "~", "\\", "\""
     };
+    // caret like thing for later use : "▌"
 
     public TexticleCell(int x, int y, int fontSize) {
         this.x = x;
@@ -37,7 +34,7 @@ public class TexticleCell implements InputSubscriber {
     }
 
     private void initializeParticles(String text) {
-        particles.clear();
+        cellParticles.clear();
         BufferedImage tempImage = createTextImage(text);
         int[] pixelData = ((DataBufferInt) tempImage.getRaster().getDataBuffer()).getData();
 
@@ -45,7 +42,7 @@ public class TexticleCell implements InputSubscriber {
             for (int x = 0; x < width; x+=stepSize) {
                 int pixelIndex = y * width + x;
                 if (pixelIndex < pixelData.length && (pixelData[pixelIndex] & 0xFF000000) != 0) {
-                    particles.add(new Particle(x, y));
+                    cellParticles.add(new Particle(x, y));
                 }
             }
         }
@@ -56,7 +53,7 @@ public class TexticleCell implements InputSubscriber {
         Graphics2D g2dTemp = tempImage.createGraphics();
 
         g2dTemp.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        Font font = new Font("Monospaced", Font.PLAIN, fontSize);
+        Font font = new Font("Monospaced", Font.LAYOUT_NO_LIMIT_CONTEXT, fontSize);
         g2dTemp.setFont(font);
         FontMetrics metrics = g2dTemp.getFontMetrics(font);
 
@@ -74,6 +71,7 @@ public class TexticleCell implements InputSubscriber {
         int textX = (int) x;
         int textY = (int) y + metrics.getAscent() - metrics.getDescent();
 
+
         g2dText.setColor(Color.WHITE);
         g2dText.drawString(text, textX, textY);
         g2dText.dispose();
@@ -89,60 +87,45 @@ public class TexticleCell implements InputSubscriber {
 
     private void updateParticleTargets(BufferedImage newTextImage) {
         int[] pixelData = ((DataBufferInt) newTextImage.getRaster().getDataBuffer()).getData();
-        int particleIndex = 0;
         List<Particle> updatedParticles = new ArrayList<>();
+        int particleIndex = 0;
 
-        for (int y = 0; y < newTextImage.getHeight(); y+=stepSize) {
-            for (int x = 0; x < newTextImage.getWidth(); x+=stepSize) {
+        for (int y = 0; y < newTextImage.getHeight(); y += stepSize) {
+            for (int x = 0; x < newTextImage.getWidth(); x += stepSize) {
                 int pixelIndex = y * newTextImage.getWidth() + x;
                 if ((pixelData[pixelIndex] & 0xFF000000) != 0) {
-                    if (particleIndex < particles.size()) {
-                        Particle particle = particles.get(particleIndex);
-                        particle.setNewTarget(x, y);
-                        updatedParticles.add(particle);
+                    Particle particle;
+                    if (particleIndex < cellParticles.size()) {
+                        particle = cellParticles.get(particleIndex);
+                        particle.setNewTarget(new Vector2(x, y));
                     } else {
-                        updatedParticles.add(new Particle(x, y));
+                        particle = new Particle(x, y);
                     }
+                    updatedParticles.add(particle);
                     particleIndex++;
                 }
             }
         }
 
-        particles = updatedParticles;
+        if (!hasDisplacedParticles()) {
+            cellParticles = updatedParticles;
+        }
     }
 
-    public void paintParticles(Graphics2D g) {
-        for (Particle particle : particles) {
+    public boolean hasDisplacedParticles() {
+        for (Particle particle : cellParticles) {
+            if (particle.isDisplaced) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void drawComponents(Graphics2D g) {
+        for (Particle particle : cellParticles) {
             particle.update();
             g.setColor(particle.color);
-            g.fillRect((int) particle.x, (int) particle.y, texticleSize, texticleSize);
+            g.drawRect((int) particle.x, (int) particle.y, particle.size, particle.size);
         }
-    }
-
-    @Override
-    public void onMouseMoved(MouseEvent e) {
-        int mouseX = e.getX();
-        int mouseY = e.getY();
-
-        for (Particle particle : particles) {
-            double distance = Math.hypot(mouseX - particle.x, mouseY - particle.y);
-            if (distance < 25) {
-                particle.isDiplaced = true;
-                particle.displace(mouseX, mouseY);
-            } else {
-                particle.isDiplaced = false;
-            }
-
-        }
-    }
-
-    @Override
-    public void onMouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void onWindowClosing(WindowEvent e) {
-
     }
 }
