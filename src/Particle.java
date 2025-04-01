@@ -57,7 +57,7 @@ public class Particle {
     }
 
     public void displace() {
-        this.life = 1000;
+        this.life = 100;
         this.isDisplaced = true;
     }
 
